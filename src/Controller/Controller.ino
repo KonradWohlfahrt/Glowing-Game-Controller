@@ -1,6 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <Gamepad.h>
 
+/* NEOPIXEL */
 #define RED 0xff0000
 #define GREEN 0x00ff00
 #define BLUE 0x0000ff
@@ -8,34 +9,45 @@
 #define PIXELPIN 5
 #define NUMPIXELS 11
 #define LEDTIME 75
+#define LEDBRIGHTNESS 20
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIXELPIN, NEO_GRB + NEO_KHZ800);
 
+
+/* EFFECTS */
 #include "ControllerEffect.h"
+#include "Chaser.h"
 #include "Rainbow.h"
+#include "RainbowFill.h"
+#include "Filler.h"
+#include "Randomizer.h"
 
-ControllerEffect * effects[] = { new Rainbow() };
-ControllerEffect * currentEffect = new Rainbow();
-const int effectSize = 1;
+const int effectsCount = 5;
+ControllerEffect * effects[] = { new RainbowFill(), new Filler(), new Randomizer(), new Chaser(), new Rainbow() };
+ControllerEffect * currentEffect;
 
+bool ledsEnabled = true;
+unsigned long lastEffectRefresh;
 unsigned long lastEffectUpdate;
 int effectIndex;
 
 
+/* JOYSTICK */
 #define JoystickLeftY A7
 #define JoystickLeftX A8
 #define JoystickRightY A9
 #define JoystickRightX A10
-Gamepad controller = Gamepad(); // useZRx; default = false
-bool isControllerActive = true;
-
 
 const int joystickMin = 5;
 const int joystickMax = 1018;
 const int joystickMiddleMin[4] = { 510, 510, 490, 560 };
 const int joystickMiddleMax[4] = { 540, 540, 520, 585 };
 
+Gamepad controller = Gamepad(); // useZRx; default = false
+bool isControllerActive = true;
 
-// BUTTON MATRIX
+
+
+/* BUTTON MATRIX */
 const int rowPins[] = { 7, 4, 16, 14 };
 const int rowCount = sizeof(rowPins)/sizeof(rowPins[0]);
 const int columnPins[] = { A2, A1, A0 };
@@ -48,7 +60,7 @@ byte buttonIndexMatrix[rowCount][columnCount] = { { 14, 13, 10}, { 4, 12, 15 }, 
 void setup() 
 {
   pixels.begin();
-  pixels.setBrightness(20);
+  pixels.setBrightness(LEDBRIGHTNESS);
 
   // JOYSTICKS
   pinMode(JoystickLeftY, INPUT);
@@ -63,35 +75,54 @@ void setup()
   for (int i = 0; i < columnCount; i++)
     pinMode(columnPins[i], INPUT_PULLUP);
 
+  // press outer two buttons (left & right) to deactivate input transmission
   updateButtonMatrix(false);
-
   if (!buttonMatrix[0][0] && !buttonMatrix[3][2])
   {
     isControllerActive = false;
     flashAnimation(RED);
     pixels.fill(RED);
     pixels.show();
-    while (true);
+  }
+  // press the two up buttons (no trigger) to deactivate the leds
+  else if (!buttonMatrix[1][1] && !buttonMatrix[3][1])
+  {
+    flashAnimation(RED, 5);
+    ledsEnabled = false;
+    pixels.clear();
+    pixels.show();
   }
   else
-  {
     scrollAnimation(GREEN);
-  }
 
-  pixels.fill(0x9000ff);
-  pixels.show();
+  if (ledsEnabled)
+  { 
+    currentEffect = effects[0];
+    currentEffect->onStart();
+  }
 }
 void loop() 
 {
   updateJoysticks();
   updateButtonMatrix(isControllerActive);
 
-  if (millis() - lastEffectUpdate >= LEDTIME)
+  if (isControllerActive && ledsEnabled && currentEffect)
   {
-    if (currentEffect)
+    if (millis() - lastEffectRefresh >= currentEffect->getSpeed())
+    {
       currentEffect->onUpdate(effectIndex);
-
-    lastEffectUpdate = millis();
+      lastEffectRefresh = millis();
+    }
+    else if (effectsCount > 1 && millis() - lastEffectUpdate >= currentEffect->getChangeSpeed())
+    {
+      int i;
+      do {
+        i = random(effectsCount);
+      } while (effects[i] == currentEffect);
+      currentEffect = effects[i];
+      currentEffect->onStart();
+      lastEffectUpdate = millis();
+    }
   }
 }
 
@@ -117,24 +148,6 @@ void updateButtonMatrix(bool send)
     }
     pinMode(columnPins[col], INPUT);
   }
-  
-  /*
-  for (int col = 0; col < 4; col++)
-  {
-    digitalWrite(columnPins[col], HIGH);
-    for (int row = 0; row < 3; row++)
-    {
-      bool value = digitalRead(rowPins[row]);
-      if (value != buttonMatrix[row][col]) 
-      {
-        buttonMatrix[row][col] = value;
-        if (isControllerActive)
-          controller.setButtonState(buttonIndexMatrix[row, col], value);
-      }
-    }
-    digitalWrite(columnPins[col], LOW);
-  }
-  */
 }
 void updateJoysticks()
 {
@@ -147,6 +160,7 @@ void updateJoysticks()
   controller.setRightYaxis(convertAnalogRead(analogRead(JoystickRightY), 2));
   controller.setRightXaxis(convertAnalogRead(analogRead(JoystickRightX), 3));
 }
+
 // values from -127 to 127; 0 is center
 int8_t convertAnalogRead(int value, int index)
 {
@@ -163,46 +177,4 @@ int8_t convertAnalogRead(int value, int index)
   // joystickMiddleMax[index] - joystickMax;
   else
     return -map(value, joystickMiddleMax[index], joystickMax, 0, 127);
-}
-
-void scrollAnimation(uint32_t color)
-{
-  for (int i = 0; i < NUMPIXELS; i++)
-  {
-    pixels.setPixelColor(i, color);
-    pixels.show();
-    delay(LEDTIME);
-  }
-  for (int i = 0; i < NUMPIXELS; i++)
-  {
-    pixels.setPixelColor(i, 0, 0, 0);
-    pixels.show();
-    delay(LEDTIME);
-  }
-}
-void flashAnimation(uint32_t color)
-{
-  for (int i = 0; i < 10; i++)
-  {
-    if (i % 2 == 0)
-      pixels.fill(color);
-    else
-      pixels.clear();
-    
-    pixels.show();
-    delay(LEDTIME);
-  }
-}
-void flashAnimation(uint32_t color, int n)
-{
-  for (int i = 0; i < 10; i++)
-  {
-    if (i % 2 == 0)
-      pixels.setPixelColor(n, color);
-    else
-      pixels.setPixelColor(n, 0);
-    
-    pixels.show();
-    delay(LEDTIME);
-  }
 }
