@@ -171,10 +171,10 @@ int8_t convertAnalogRead(int value, int index)
   if (joystickMiddleMin[index] <= value && value <= joystickMiddleMax[index])
     return 0;
 
-  // joystickMin - joystickMiddleMin[index];
+  // range from joystickMin - joystickMiddleMin[index];
   if (value <= joystickMiddleMin[index])
     return -map(value, joystickMin, joystickMiddleMin[index], -127, 0);
-  // joystickMiddleMax[index] - joystickMax;
+  // range from joystickMiddleMax[index] - joystickMax;
   else
     return -map(value, joystickMiddleMax[index], joystickMax, 0, 127);
 }

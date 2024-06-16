@@ -38,6 +38,9 @@ Also, there is no case! If you like to protect the solder joints, add another pc
 # Programming
 In the `src/` folder you'll find the source code. Open `Controller.ino` and install the `Adafruit Neopixel` and [`Gamepad`](https://github.com/GAMELASTER/ArduinoGamepad) libraries.
 Then select the proper board (in my case: `Arduino Leonardo`), its corresponding port and upload the sketch!
+You may want to test the joysticks first. Open up the corresponding sketch and take a look at the analog values.
+Depending on your readings you should adjust the deadzones accordingly.
+
 
 
 ***
