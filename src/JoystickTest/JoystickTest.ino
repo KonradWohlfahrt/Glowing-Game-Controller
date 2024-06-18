@@ -7,8 +7,9 @@
 /* CHANGE THESE VALUES ACCORDING TO YOUR MEASUREMENTS */
 const int joystickMin = 5;
 const int joystickMax = 1018;
-const int joystickMiddleMin[4] = { 510, 510, 490, 560 };
-const int joystickMiddleMax[4] = { 540, 540, 520, 585 };
+// my analog readings: 528, 532, 502, 579
+const int joystickMiddleMin[4] = { 500, 500, 485, 550 };
+const int joystickMiddleMax[4] = { 560, 560, 535, 600 };
 
 
 void setup() 
@@ -23,14 +24,15 @@ void setup()
 }
 void loop() 
 {
-  // pure analog values
+  ///* pure analog values
   Serial.print(analogRead(JoystickLeftY));
   Serial.print("\t");
   Serial.print(analogRead(JoystickLeftX));
   Serial.print("\t");
   Serial.print(analogRead(JoystickRightY));
   Serial.print("\t");
-  Serial.println(analogRead(JoystickLeftX));
+  Serial.println(analogRead(JoystickRightX));
+  //*/
 
   /* the converted range from -127 to 127
   Serial.print(convertAnalogRead(analogRead(JoystickLeftY), 0));
@@ -39,7 +41,7 @@ void loop()
   Serial.print("\t");
   Serial.print(convertAnalogRead(analogRead(JoystickRightY), 2));
   Serial.print("\t");
-  Serial.println(convertAnalogRead(analogRead(JoystickLeftX), 3));
+  Serial.println(convertAnalogRead(analogRead(JoystickRightX), 3));
   */
 }
 

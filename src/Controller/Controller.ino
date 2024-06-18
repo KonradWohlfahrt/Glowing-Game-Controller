@@ -39,8 +39,8 @@ int effectIndex;
 
 const int joystickMin = 5;
 const int joystickMax = 1018;
-const int joystickMiddleMin[4] = { 510, 510, 490, 560 };
-const int joystickMiddleMax[4] = { 540, 540, 520, 585 };
+const int joystickMiddleMin[4] = { 500, 500, 485, 550 };
+const int joystickMiddleMax[4] = { 560, 560, 535, 600 };
 
 Gamepad controller = Gamepad(); // useZRx; default = false
 bool isControllerActive = true;
@@ -113,7 +113,7 @@ void loop()
       currentEffect->onUpdate(effectIndex);
       lastEffectRefresh = millis();
     }
-    else if (effectsCount > 1 && millis() - lastEffectUpdate >= currentEffect->getChangeSpeed())
+    else if (effectsCount > 1 && millis() - lastEffectUpdate >= currentEffect->getDuration())
     {
       int i;
       do {

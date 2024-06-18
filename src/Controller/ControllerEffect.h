@@ -63,15 +63,15 @@ uint32_t getSimilarColor(uint32_t color) { return pixels.gamma32(pixels.Color(sh
 class ControllerEffect 
 {
     public:
-        ControllerEffect(int effectSpeed = 25, unsigned long changeSpeed = 30000) : _effectSpeed(effectSpeed), _changeSpeed(changeSpeed) {}
+        ControllerEffect(int effectSpeed = 25, unsigned long effectDuration = 30000) : _effectSpeed(effectSpeed), _effectDuration(effectDuration) {}
         virtual void onStart() = 0;
         virtual void onUpdate(int& i) = 0;
         int getSpeed() { return _effectSpeed; }
-        unsigned long getChangeSpeed () { return _changeSpeed; }
+        unsigned long getDuration () { return _effectDuration; }
 
     private:
         int _effectSpeed;
-        unsigned long _changeSpeed;
+        unsigned long _effectDuration;
 };
 
 #endif
