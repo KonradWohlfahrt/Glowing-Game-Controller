@@ -1,6 +1,6 @@
 # Game Controller
 Ever wanted to build your own controller/gamepad? Well, with the electronics nowadays is really simple! In this repository you'll find the project files for my diy controller based on the Arduino Leonardo (Arduino Pro Micro). It's a simple first project for soldering (smd components, e.g. the leds, are voluntary) and getting started with the arduino software!
-![Controller](https://github.com/Donut-Studio/Arduino-Leonardo-Game-Controller/blob/main/images/Controller.jpg)
+![Controller](https://github.com/KonradWohlfahrt/Arduino-Leonardo-Game-Controller/blob/main/images/Controller.jpg)
 
 
 ***
@@ -25,13 +25,13 @@ You don't have to use the smd components, but the Neopixels make it look so much
 
 **Soldering:**<br>
 Solder the components as indicated in the table and images. You should start from the smallest components.
-![PCB Front](https://github.com/Donut-Studio/Arduino-Leonardo-Game-Controller/blob/main/images/PCB_Front.jpg)
+![PCB Front](https://github.com/KonradWohlfahrt/Arduino-Leonardo-Game-Controller/blob/main/images/PCB_Front.jpg)
 
 **ToDo:**<br>
 This project is still in progress! I might desing another circuit with more buttons.
 I thought of using an oled screen to even add some more features to the controller. Stay tuned for further versions!
 Also, there is no case! If you like to protect the solder joints, add another pcb to the bottom like this:
-![PCB Case](https://github.com/Donut-Studio/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_Case.jpg)
+![PCB Case](https://github.com/KonradWohlfahrt/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_Case.jpg)
 
 
 ***
@@ -53,5 +53,5 @@ Take a look at [this instructable](https://www.instructables.com/Arduino-Leonard
 If you press the outer two buttons (left/right), the controller flashes red and won't transmit any input.
 If you press the two up buttons (not triggers), the leds will be disabled.
 
-![Controller on](https://github.com/Donut-Studio/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_On.jpg)
-![Controller off](https://github.com/Donut-Studio/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_Off.jpg)
+![Controller on](https://github.com/KonradWohlfahrt/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_On.jpg)
+![Controller off](https://github.com/KonradWohlfahrt/Arduino-Leonardo-Game-Controller/blob/main/images/Controller_Off.jpg)
