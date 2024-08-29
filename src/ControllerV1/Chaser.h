@@ -4,7 +4,7 @@
 class Chaser : public ControllerEffect
 {
   public:
-    Chaser() : ControllerEffect(100) { }
+    Chaser() : ControllerEffect(75) { }
 
     void onStart()
     {

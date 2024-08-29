@@ -4,17 +4,17 @@
 class Randomizer : public ControllerEffect
 {
   public:
-    Randomizer() : ControllerEffect(200) { }
+    Randomizer() : ControllerEffect(250) { }
 
     void onStart()
     {
-      pixels.fill(getRandomColor());
-      pixels.show();
+      pixels.setColor(getRandomColor());
+      pixels.setMode(10);
+      pixels.start();
     }
     void onUpdate(int& i) 
     {
-      pixels.setPixelColor(random(NUMPIXELS), getRandomColor());
-      pixels.show();
+      pixels.service();
     }
 
     private:

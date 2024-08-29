@@ -1,6 +1,17 @@
 #ifndef CONTROLLEREFFECT_h
 #define CONTROLLEREFFECT_h
 
+#include <WS2812FX.h>
+
+/* NEOPIXEL */
+
+#define PIXELPIN 5
+#define NUMPIXELS 11
+#define LEDTIME 75
+#define LEDBRIGHTNESS 20
+WS2812FX pixels = WS2812FX(NUMPIXELS, PIXELPIN, NEO_GRB + NEO_KHZ800);
+
+
 void scrollAnimation(uint32_t color)
 {
   for (int i = 0; i < NUMPIXELS; i++)
@@ -21,7 +32,7 @@ void flashAnimation(uint32_t color)
   for (int i = 0; i < 10; i++)
   {
     if (i % 2 == 0)
-      pixels.fill(color);
+      pixels.fill(color, 0, NUMPIXELS);
     else
       pixels.clear();
     

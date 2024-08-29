@@ -4,7 +4,7 @@
 class Filler : public ControllerEffect
 {
   public:
-    Filler() : ControllerEffect(100) { }
+    Filler() : ControllerEffect(75) { }
 
     void onStart()
     {

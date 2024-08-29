@@ -12,7 +12,7 @@ class RainbowFill : public ControllerEffect
     }
     void onUpdate(int& i) 
     {
-      pixels.fill(pixels.ColorHSV(hue));
+      pixels.fill(pixels.ColorHSV(hue), 0, NUMPIXELS);
       pixels.show();
       hue += 256;
     }

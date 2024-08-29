@@ -1,17 +1,4 @@
-#include <Adafruit_NeoPixel.h>
 #include <Gamepad.h>
-
-/* NEOPIXEL */
-#define RED 0xff0000
-#define GREEN 0x00ff00
-#define BLUE 0x0000ff
-
-#define PIXELPIN 5
-#define NUMPIXELS 11
-#define LEDTIME 75
-#define LEDBRIGHTNESS 20
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIXELPIN, NEO_GRB + NEO_KHZ800);
-
 
 /* EFFECTS */
 #include "ControllerEffect.h"
@@ -20,9 +7,15 @@ Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIXELPIN, NEO_GRB + NEO_
 #include "RainbowFill.h"
 #include "Filler.h"
 #include "Randomizer.h"
+#include "Scanner.h"
+#include "Fader.h"
+#include "Fireworks.h"
+#include "Running.h"
+#include "Sparkle.h"
 
-const int effectsCount = 5;
-ControllerEffect * effects[] = { new RainbowFill(), new Filler(), new Randomizer(), new Chaser(), new Rainbow() };
+
+const int effectsCount = 10;
+ControllerEffect * effects[] = { new Fireworks(), new Rainbow(), new Sparkle(), new Running(), new Scanner(), new Fader(), new Randomizer(), new RainbowFill(), new Filler(), new Chaser() };
 ControllerEffect * currentEffect;
 
 bool ledsEnabled = true;
@@ -39,8 +32,8 @@ int effectIndex;
 
 const int joystickMin = 5;
 const int joystickMax = 1018;
-const int joystickMiddleMin[4] = { 500, 500, 485, 550 };
-const int joystickMiddleMax[4] = { 560, 560, 535, 600 };
+const int joystickMiddleMin[4] = { 412, 412, 412, 412 };
+const int joystickMiddleMax[4] = { 612, 612, 612, 612 };
 
 Gamepad controller = Gamepad(); // useZRx; default = false
 bool isControllerActive = true;
@@ -48,19 +41,20 @@ bool isControllerActive = true;
 
 
 /* BUTTON MATRIX */
-const int rowPins[] = { 7, 4, 16, 14 };
+const int rowPins[] = { 4, 7, 14, 16 };
 const int rowCount = sizeof(rowPins)/sizeof(rowPins[0]);
-const int columnPins[] = { A2, A1, A0 };
+const int columnPins[] = { A3, A2, A1, A0 };
 const int columnCount = sizeof(columnPins)/sizeof(columnPins[0]);
 
 bool buttonMatrix[rowCount][columnCount];
-byte buttonIndexMatrix[rowCount][columnCount] = { { 14, 13, 10}, { 4, 12, 15 }, { 1, 0, 11 }, { 5, 3, 2 } };
+byte buttonIndexMatrix[rowCount][columnCount] = { { 4, 14, 13, 10}, { 6, 12, 15, 8 }, { 7, 3, 1, 9 }, { 5, 2, 0, 11 } };
 
 
 void setup() 
 {
-  pixels.begin();
+  pixels.init();
   pixels.setBrightness(LEDBRIGHTNESS);
+  pixels.setSpeed(200);
 
   // JOYSTICKS
   pinMode(JoystickLeftY, INPUT);
@@ -77,15 +71,15 @@ void setup()
 
   // press outer two buttons (left & right) to deactivate input transmission
   updateButtonMatrix(false);
-  if (!buttonMatrix[0][0] && !buttonMatrix[3][2])
+  if (!buttonMatrix[0][1] && !buttonMatrix[3][1])
   {
     isControllerActive = false;
     flashAnimation(RED);
-    pixels.fill(RED);
+    pixels.fill(RED, 0, NUMPIXELS);
     pixels.show();
   }
   // press the two up buttons (no trigger) to deactivate the leds
-  else if (!buttonMatrix[1][1] && !buttonMatrix[3][1])
+  else if (!buttonMatrix[1][1] && !buttonMatrix[2][1])
   {
     flashAnimation(RED, 5);
     ledsEnabled = false;
@@ -142,6 +136,8 @@ void updateButtonMatrix(bool send)
         buttonMatrix[row][col] = value;
         if (send)
           controller.setButtonState(buttonIndexMatrix[row][col], !value);
+        if (value)
+          pixels.trigger();
       }
 
 			pinMode(rowPins[row], INPUT);
